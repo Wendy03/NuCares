@@ -10,7 +10,7 @@ using NSwag.Annotations;
 
 namespace NuCares.Controllers
 {
-    [OpenApiTag("Stdent", Description = "學員")]
+    [OpenApiTag("Student", Description = "學員")]
     public class AllCourseListController : ApiController
     {
         private readonly NuCaresDBContext db = new NuCaresDBContext();
@@ -43,9 +43,9 @@ namespace NuCares.Controllers
             }
 
             int pageSize = 10; // 每頁顯示的記錄數
-
             var totalRecords = db.Courses.Where(c => c.Order.UserId == id).Count(); // 計算符合條件的記錄總數
             int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize); // 計算總頁數
+            var today = DateTime.Today;
 
             var coursesData = db.Courses
                 .Where(c => c.Order.UserId == id)
@@ -60,9 +60,9 @@ namespace NuCares.Controllers
                     c.Order.Plan.Nutritionist.Title,
                     c.Order.Plan.CourseWeek,
                     c.Order.Plan.CourseName,
-                    CourseStartDate = c.CourseStartDate.HasValue ? c.CourseStartDate.Value.ToString("yyyy-MM-dd") : null,
-                    CourseEndDate = c.CourseEndDate.HasValue ? c.CourseEndDate.Value.ToString("yyyy-MM-dd") : null,
-                    CourseState = c.CourseState.ToString(),
+                    CourseStartDate = c.CourseStartDate.HasValue ? c.CourseStartDate.Value.ToString("yyyy/MM/dd") : null,
+                    CourseEndDate = c.CourseEndDate.HasValue ? c.CourseEndDate.Value.ToString("yyyy/MM/dd") : null,
+                    CourseState = c.CourseEndDate < today ? "結束" : c.CourseState.ToString(),
                     c.IsQuest,
                     c.IsComment,
                 });
