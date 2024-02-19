@@ -1,4 +1,5 @@
-﻿using NSwag.Annotations;
+﻿using Microsoft.AspNet.SignalR;
+using NSwag.Annotations;
 using NuCares.helper;
 using NuCares.Models;
 using NuCares.Security;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using static NuCares.Models.EnumList;
 
 namespace NuCares.Controllers
 {
@@ -729,7 +731,7 @@ namespace NuCares.Controllers
                         Message = "該課程已經評價過了"
                     });
                 }
-                else if (course.CourseEndDate < today)
+                else if (course.CourseEndDate > today)
                 {
                     // 課程狀態不是結束的情況
                     return Content(HttpStatusCode.BadRequest, new
@@ -762,8 +764,9 @@ namespace NuCares.Controllers
                             db.SaveChanges();
 
                             // 將Course設定為已評價
-                            var coursedata = db.Courses.Where(c => c.Id == courseId).FirstOrDefault();
-                            coursedata.IsComment = true;
+                            var courseData = db.Courses.Where(c => c.Id == courseId).FirstOrDefault();
+                            courseData.IsComment = true;
+
                             try
                             {
                                 db.SaveChanges();
@@ -773,11 +776,27 @@ namespace NuCares.Controllers
                                 return InternalServerError(ex);
                             }
 
+                            //  通知訊息
+                            int channelId = courseData.Order.Plan.Nutritionist.UserId;  // 傳送通知給哪個營樣師
+                            int noticeId = Notice.AddNotice(db, channelId, "已評價", courseId.ToString());   // 紀錄通知訊息
+
+                            // 取得 connectionId
+                            string nuUserId = courseData.Order.Plan.Nutritionist.UserId.ToString();
+                            var connectionId = NotificationHub.Users.ConnectionIds.FirstOrDefault(u => u.Key == nuUserId).Value;
+
+                            // Signal R通知
+                            //Notice.SendNotice(sourceName, "已評價");
+                            if (connectionId != null)
+                            {
+                                Notice.GetNotice(db, connectionId, noticeId, courseData);
+                            }
+
                             var result = new
                             {
                                 StatusCode = 200,
                                 Status = "Success",
-                                Message = "評價成功"
+                                Message = "評價成功",
+                                Test = connectionId
                             };
                             return Ok(result);
                         }
@@ -826,7 +845,7 @@ namespace NuCares.Controllers
         /// 收藏營養師列表
         /// </summary>
         /// <returns></returns>
-        [OpenApiTag("Stdent", Description = "學員")]
+        [OpenApiTag("Student", Description = "學員")]
         [HttpGet]
         [Route("user/follow")]
         [JwtAuthFilter]
