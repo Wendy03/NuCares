@@ -1,10 +1,12 @@
 # NuCares ｜ Who cares? NuCares!!
 [專案網址](https://nu-cares.vercel.app) ｜ [前端 Github Repo](https://github.com/Annie-Peng/NuCares) ｜ [Swagger](https://nucares.top/swagger/index.html?url=/swagger/v1/swagger.json) ｜
 
+<img src="https://github.com/Wendy03/NuCares/assets/56230540/318aad1b-e73a-4222-8b79-6cb00340003d" width="100%" height="100%">
+
 ## 功能介紹
 成為會員之後能夠進一步根據使用的服務分為「學員」及「營養師」角色
 
->  ### <img src="https://nucares.top/readme/us.png" width="3%"> 學員
+>  ### > 學員
 - 註冊/登入
 - 搜尋營養師
 - 查看營養師專頁、課程方案
@@ -20,7 +22,7 @@
 - 修改密碼
 - 申請成為營養師
 
->  ### <img src="https://nucares.top/readme/nu.png" width="3%"> 營養師
+>  ### > 營養師
 - 登入
 - 編輯營養師專頁-關於我
 - 編輯課程方案
@@ -29,6 +31,7 @@
 - 查看學員每日身體紀錄
 - 編輯學員目標
 - 編輯每日菜單
+![NuCares_Mockup](https://github.com/Wendy03/NuCares/assets/56230540/318aad1b-e73a-4222-8b79-6cb00340003d)
 
 ## 網站體驗流程
 
